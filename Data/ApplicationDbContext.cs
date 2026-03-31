@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BudgetRequest> BudgetRequests { get; set; }
     public DbSet<Bid> Bids { get; set; }
     public DbSet<Visit> Visits { get; set; }
+    public DbSet<UploadImage> UploadImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

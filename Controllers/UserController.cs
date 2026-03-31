@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PlataformaMarcenaria.API.DTOs.User;
@@ -23,6 +24,16 @@ public class UserController : ControllerBase
     {
         var user = await _userService.CreateUserAsync(createDTO);
         return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+    }
+
+    /// <summary>Listagem pública de usuários por tipo (ex.: vendedores/marceneiros na landing).</summary>
+    [HttpGet("public")]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetPublicUsersByType([FromQuery] UserType userType)
+    {
+        var users = await _userService.GetUsersByTypeAsync(userType);
+        var active = users.Where(u => u.Active).Take(48).ToList();
+        return Ok(active);
     }
 
     [HttpGet("{id}")]

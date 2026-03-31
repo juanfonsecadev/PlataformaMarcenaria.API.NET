@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PlataformaMarcenaria.API.DTOs.Auth;
 using PlataformaMarcenaria.API.DTOs.User;
 using PlataformaMarcenaria.API.Repositories;
 using PlataformaMarcenaria.API.Security;
@@ -29,7 +28,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<JwtAuthenticationResponse>> Login([FromBody] UserLoginDTO userLoginDTO)
+    public async Task<ActionResult<object>> Login([FromBody] UserLoginDTO userLoginDTO)
     {
         var user = await _userRepository.GetByEmailAsync(userLoginDTO.Email);
         if (user == null || !BCrypt.Net.BCrypt.Verify(userLoginDTO.Password, user.Password))
@@ -38,7 +37,24 @@ public class AuthenticationController : ControllerBase
         }
 
         var jwt = _tokenProvider.GenerateToken(user.Email);
-        return Ok(new JwtAuthenticationResponse(jwt));
+        return Ok(new
+        {
+            token = jwt,
+            user = new
+            {
+                id = user.Id,
+                name = user.Name,
+                email = user.Email,
+                phone = user.Phone,
+                userType = user.UserType,
+                avatar = user.Avatar,
+                document = user.Document,
+                active = user.Active,
+                rating = user.Rating,
+                createdAt = user.CreatedAt,
+                updatedAt = user.UpdatedAt
+            }
+        });
     }
 
     [HttpPost("register")]

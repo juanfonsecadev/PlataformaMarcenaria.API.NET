@@ -155,6 +155,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(app.Environment.IsDevelopment() ? "Development" : "AllowLocalhost");
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 // Use custom exception handling middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
